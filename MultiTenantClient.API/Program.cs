@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspectCore.Extensions.DependencyInjection;
+using AspectCore.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -21,6 +23,8 @@ namespace MultiTenantClient.API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }).UseDynamicProxy();
+            
+            //.UseServiceProviderFactory(new DynamicProxyServiceProviderFactory() );
     }
 }

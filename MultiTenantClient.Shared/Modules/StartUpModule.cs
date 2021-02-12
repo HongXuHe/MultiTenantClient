@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MultiTenantClient.Shared.Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -8,7 +10,7 @@ using System.Text;
 
 namespace MultiTenantClient.Shared.Modules
 {
-    public class StartUpModule : BaseModule,IStartUpModule
+    public class StartUpModule : BaseModule, IStartUpModule
     {
         public Type StartUpModuleType { get; set; }
 
@@ -21,14 +23,14 @@ namespace MultiTenantClient.Shared.Modules
 
         public StartUpModule(Type startUpModuleType, IServiceCollection services)
         {
-          //  services.TryAddSingleton<
+            //  services.TryAddSingleton<
             services.AddSingleton<IStartUpModule>(this);
             StartUpModuleType = startUpModuleType;
             Services = services;
             _moduleListAll = GetAllAppModules();
             Modules = LoadModules();
         }
-  
+
 
         /// <summary>
         /// configure all module services
@@ -47,7 +49,7 @@ namespace MultiTenantClient.Shared.Modules
 
         public void Dispose()
         {
-            if(ServiceProvider is IDisposable disposable)
+            if (ServiceProvider is IDisposable disposable)
             {
                 disposable.Dispose();
             }
@@ -56,7 +58,7 @@ namespace MultiTenantClient.Shared.Modules
         public void Initialize(IServiceProvider app)
         {
             ServiceProvider = app;
-            using (var scope =ServiceProvider.CreateScope())
+            using (var scope = ServiceProvider.CreateScope())
             {
                 var configurationContext = new ConfigureContext(app);
                 foreach (var module in Modules)
@@ -66,11 +68,12 @@ namespace MultiTenantClient.Shared.Modules
             }
         }
 
-        
+
         private List<IAppModule> GetAllAppModules()
         {
             var modules = new List<IAppModule>();
-            var types = AppDomain.CurrentDomain.GetAssemblies()
+            Assembly.GetExecutingAssembly().GetReferencedAssemblies().Select((item) => Assembly.Load(item));
+            var types = AssemblyHelper.GetAllAssemblies()
                 .SelectMany(s => s.GetTypes())
                 .Where(p => IsAppModule(p)).ToList();
             foreach (var type in types)
@@ -90,8 +93,8 @@ namespace MultiTenantClient.Shared.Modules
         {
             List<IAppModule> moduleList = new List<IAppModule>();
             //check if startupmodule exist
-           var existStartUpModule= _moduleListAll.FirstOrDefault(m => m.GetType() == StartUpModuleType);
-            if(existStartUpModule == null)
+            var existStartUpModule = _moduleListAll.FirstOrDefault(m => m.GetType() == StartUpModuleType);
+            if (existStartUpModule == null)
             {
                 throw new ArgumentNullException(nameof(StartUpModuleType));
             }
@@ -104,7 +107,7 @@ namespace MultiTenantClient.Shared.Modules
                 {
                     //relay module
                     var existModule = _moduleListAll.FirstOrDefault(x => x.GetType() == depended);
-                    if(existModule == null)
+                    if (existModule == null)
                     {
                         throw new ArgumentNullException($"cannot find module {depended.FullName}");
                     }
@@ -120,7 +123,7 @@ namespace MultiTenantClient.Shared.Modules
 
         private IAppModule CreatModuleInstanceAndSetSingleton(Type type, IServiceCollection services)
         {
-            var moduleInstance =  /*(IAppModule)Activator.CreateInstance(type)*/(IAppModule)Expression.Lambda(Expression.New(type)).Compile().DynamicInvoke(); ;
+            var moduleInstance = (IAppModule)Activator.CreateInstance(type);/*(IAppModule)Expression.Lambda(Expression.New(type)).Compile().DynamicInvoke();*/
             services.AddSingleton(type, moduleInstance);
             return moduleInstance;
         }
