@@ -1,4 +1,6 @@
-﻿using MultiTenantClient.Shared.Modules;
+﻿using Microsoft.Extensions.DependencyInjection;
+using MultiTenantClient.EventBus;
+using MultiTenantClient.Shared.Modules;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,14 +9,22 @@ using System.Threading.Tasks;
 
 namespace MultiTenantClient.API.StartUps
 {
-    public class SqlServerModule : BaseModule
+    [DependsOn(typeof(EventBustModule))]
+    public class SqlServerModule : SqlServerModuleBase
     {
-        public override void ConfigureServices(ConfigureServiceContext configureService)
+        protected override IServiceCollection AddRepository(IServiceCollection services)
         {
+            throw new NotImplementedException();
         }
 
-        public override void InitializationApplication(ConfigureContext context)
+        protected override IServiceCollection AddUnitOfWork(IServiceCollection services)
         {
+            throw new NotImplementedException();
+        }
+
+        protected override IServiceCollection UseSql(IServiceCollection services)
+        {
+            throw new NotImplementedException();
         }
     }
 }

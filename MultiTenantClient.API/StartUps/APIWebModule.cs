@@ -7,10 +7,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MultiTenantClient.AutoMapper;
+using MultiTenantClient.Swagger;
+using MultiTenantClient.EventBus;
 
 namespace MultiTenantClient.API.StartUps
 {
-    [DependsOn(typeof(SqlServerModule), typeof(AopModule))]
+    [DependsOn(typeof(SqlServerModule), 
+        typeof(AopModule),
+        typeof(AutoMapperModule),
+        typeof(SwaggerModule),
+        typeof(EventBustModule)
+        )]
     public class APIWebModule:BaseModule
     {
         public override void ConfigureServices(ConfigureServiceContext configureService)

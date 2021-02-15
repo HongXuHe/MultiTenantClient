@@ -4,15 +4,25 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>.\MultiTenantClient.API.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AspectCore.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="AspectCore.Extensions.Hosting" Version="2.2.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MultiTenantClient.Aop\MultiTenantClient.Aop.csproj" />
+    <ProjectReference Include="..\MultiTenantClient.AutoMapperModule\MultiTenantClient.AutoMapper.csproj" />
+    <ProjectReference Include="..\MultiTenantClient.Entities\MultiTenantClient.Entities.csproj" />
+    <ProjectReference Include="..\MultiTenantClient.EventBus\MultiTenantClient.EventBus.csproj" />
     <ProjectReference Include="..\MultiTenantClient.Repo\MultiTenantClient.Repo.csproj" />
     <ProjectReference Include="..\MultiTenantClient.Shared\MultiTenantClient.Shared.csproj" />
+    <ProjectReference Include="..\MultiTenantClient.Swagger\MultiTenantClient.Swagger.csproj" />
   </ItemGroup>
 
 </Project>
