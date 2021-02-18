@@ -12,7 +12,7 @@ namespace MultiTenantClient.Repo.CQRSHandler
     {
         public async Task<string> Handle(BaseDto request, CancellationToken cancellationToken)
         {
-            return request.Name +"ddd";
+            return await Task.FromResult<string>(request.Name);
         }
     }
 }

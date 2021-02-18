@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 using MultiTenantClient.AutoMapper;
 using MultiTenantClient.Swagger;
 using MultiTenantClient.EventBus;
+using MultiTenantClient.Repo.UOW;
 
 namespace MultiTenantClient.API.StartUps
 {
     [DependsOn(typeof(SqlServerModule), 
         typeof(AopModule),
         typeof(AutoMapperModule),
-        typeof(SwaggerModule),
-        typeof(EventBustModule)
+        typeof(SwaggerModule)
         )]
     public class APIWebModule:BaseModule
     {
@@ -25,7 +25,8 @@ namespace MultiTenantClient.API.StartUps
         {
             var services = configureService.ServiceCollection;
             services.AddControllers();
-            services.AddScoped<IRepoBase, RepoBase>();
+         
+          //  services.AddScoped<IRepoBase<>, RepoBase<>>();
         }
 
         public override void InitializationApplication(ConfigureContext context)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MultiTenantClient.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,18 +8,30 @@ using System.Threading.Tasks;
 
 namespace MultiTenantClient.Repo.UOW
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
-        DbContext GetDbContext();
-        void BeginTransaction();
+        /// <summary>
+        /// get dbcontext
+        /// </summary>
+        /// <returns></returns>
+        MultiTenantClientContext GetDbContext();
+
+        /// <summary>
+        /// begin a new tranaction
+        /// </summary>
+        bool BeginTransaction(Action action);
+        /// <summary>
+        /// commit everything
+        /// </summary>
         void Commit();
-        Task BeginTransactionAsync(CancellationToken cancellationToken = default(CancellationToken));
-        void Rollback();
-        void UseTran(Action action);
-        Task UseTranAsync(Func<Task> action);
-        bool UseTran(Func<bool> func);
-        Task<bool> UseTranAsync(Func<Task<bool>> func);
-        Task CommitAsync();
-        Task RollbackAsync();
+        Task<int> CommitAsync();
+
+        /// <summary>
+        /// begin a new transaction async
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<bool> BeginTransactionAsync(Action action);
+
     }
 }

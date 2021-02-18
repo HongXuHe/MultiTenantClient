@@ -3,7 +3,9 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MultiTenantClient.Aop.AttributeAop;
 using MultiTenantClient.Entities;
+using MultiTenantClient.Entities.Dtos;
 using MultiTenantClient.Repo;
+using MultiTenantClient.Repo.UOW;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,27 +17,25 @@ namespace MultiTenantClient.API.Controllers
     [Route("api/[controller]")]
     public class HomeController : ControllerBase
     {
-        private readonly IRepoBase _repoBase;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
+        private readonly IUserRepo _userRepo;
 
-        public HomeController(IRepoBase repoBase, IMapper mapper, IMediator mediator)
+        public HomeController( IMapper mapper, IMediator mediator, IUserRepo userRepo)
         {
-            _repoBase = repoBase;
             _mapper = mapper;
             _mediator = mediator;
+            _userRepo = userRepo;
         }
         [HttpGet("")]
         public IActionResult Index()
         {
             //_repoBase.FindById("ss");
             //var entity = new List<BaseEntity> { new BaseEntity() { Name = "matt" } };
-            //var dto = _mapper.Map<List<BaseDto>>(entity);
-            var dto = new BaseDto
-            {
-                Name = "matt"
-            };
-            var res = _mediator.Send(dto).GetAwaiter().GetResult();
+            var dto = _mapper.Map<List<UserDto>>(_userRepo.GetEntities(x => true).ToList());
+            
+          //  var dto = _userRepo.GetEntities(x=>true).ToList();
+          //  var res = _mediator.Send(dto).GetAwaiter().GetResult();
             return new JsonResult("ss");
         }
     }
