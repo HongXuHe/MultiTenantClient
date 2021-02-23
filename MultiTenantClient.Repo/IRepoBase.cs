@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MultiTenantClient.Repo
@@ -86,6 +87,36 @@ namespace MultiTenantClient.Repo
 
         IQueryable<TEntity> ExecuteSql(string sql, params object[] parameters);
 
+        #endregion
+
+        #region Create
+        /// <summary>
+        /// insert entity
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        Task<int> InsertAsync(TEntity entity);
+
+        Task<int> InsertAsync(TEntity[] entities);
+
+        Task<int> InsertAsync<TDto>(TDto dto,Func<TDto,Task> checkFunc =null, Func<TDto,TEntity,Task<TEntity>> insertFunc =null,Func<TEntity,TDto> completeFunc=null);
+        int Insert(params TEntity[] entities);
+        #endregion
+
+        #region Update
+        int Update(TEntity entity);
+        Task<int> UpdateAsync(TEntity entity);
+        Task<int> UpdateAsync(TEntity[] entities);
+        #endregion
+
+        #region Delete
+        Task<int> DeleteAsync(Guid id);
+        Task<int> DeleteAsync(TEntity entity);
+        int Delete(params TEntity[] entities);
+        Task<int> DeleteBatchAsync(Expression<Func<TEntity, bool>> whereLambda);
+        #endregion
+        #region CheckExist
+        Task<bool> ExistAsync(Expression<Func<TEntity, bool>> whereLambda);
         #endregion
     }
 }

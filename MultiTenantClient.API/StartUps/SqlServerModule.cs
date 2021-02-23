@@ -22,6 +22,8 @@ namespace MultiTenantClient.API.StartUps
         protected override IServiceCollection AddRepository(IServiceCollection services)
         {
             services.AddScoped<IUserRepo, UserRepo>();
+            services.AddScoped<IRoleRepo, RoleRepo>();
+            services.AddScoped<IPermissionRepo, PermissionRepo>();
             return services;
         }
 

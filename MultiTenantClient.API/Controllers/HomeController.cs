@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MultiTenantClient.Aop.AttributeAop;
 using MultiTenantClient.Entities;
 using MultiTenantClient.Entities.Dtos;
@@ -21,7 +22,7 @@ namespace MultiTenantClient.API.Controllers
         private readonly IMediator _mediator;
         private readonly IUserRepo _userRepo;
 
-        public HomeController( IMapper mapper, IMediator mediator, IUserRepo userRepo)
+        public HomeController(IMapper mapper, IMediator mediator, IUserRepo userRepo)
         {
             _mapper = mapper;
             _mediator = mediator;
@@ -30,13 +31,12 @@ namespace MultiTenantClient.API.Controllers
         [HttpGet("")]
         public IActionResult Index()
         {
-            //_repoBase.FindById("ss");
-            //var entity = new List<BaseEntity> { new BaseEntity() { Name = "matt" } };
-            var dto = _mapper.Map<List<UserDto>>(_userRepo.GetEntities(x => true).ToList());
-            
-          //  var dto = _userRepo.GetEntities(x=>true).ToList();
-          //  var res = _mediator.Send(dto).GetAwaiter().GetResult();
-            return new JsonResult("ss");
+            var context = _userRepo.UnitOfWork.GetDbContext();
+            var dtos =_mapper.Map<List<UserDto>>(context.UserEntities
+                .Include(x=>x.Roles).ThenInclude(y=>y.RoleEntity)
+                .Include(x=>x.Permissions).ThenInclude(y=>y.PermissionEntity)
+                .ToList());
+            return new JsonResult(dtos);
         }
     }
 }
